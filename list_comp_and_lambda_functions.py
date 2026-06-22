@@ -1,4 +1,6 @@
 import json
+import pandas as pd
+
 
 world_cup_str = """
 [
@@ -54,4 +56,53 @@ hn_clean = [del_key(d, 'createdAtI') for d in hn]
 urls = [d["url"] for d in hn_clean]
 
 # Using List Comprehensions to Reduce a List
+
+thousand_points=[d for d in hn_clean if d["points"]>1000]
+num_thousand_points=len(thousand_points)
+
+# Passing Functions as Arguments
+
+def numComments(json_dict):
+    return json_dict["numComments"]
+
+most_comments = max(hn_clean, key=numComments)
+jprint(most_comments)
+
+
+# Lambda Functions
+
+# def multiply(a, b):
+#    return a * b
+
+multiply = lambda a,b: a*b
+
+# Using Lambda Functions to Analyze JSON data
+
+hn_sorted_points=sorted(hn_clean, key=lambda d: d["points"], reverse=True)
+
+top_5_titles = [d['title'] for d in hn_sorted_points[:5]]
+
+# Reading JSON files into pandas
+
+hn_df = pd.DataFrame(hn_clean)
+
+
+#  Exploring Tags Using the Apply Function
+
+tags = hn_df['tags']
+
+has_four_tags=tags.apply(len)==4
+four_tags=tags[has_four_tags]
+
+
+# Extracting Tags Using Apply with a Lambda Function
+
+# def extract_tag(l):
+#     return l[-1] if len(l) == 4 else None
+
+
+cleaned_tags = tags.apply(lambda l: l[-1] if len(l) == 4 else None)
+hn_df['tags'] = cleaned_tags
+
+
 
